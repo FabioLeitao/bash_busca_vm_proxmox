@@ -16,6 +16,7 @@ function check_service_(){
 		echo "0:200:OK - VM ${ARGUMENTO} - ${VM_NAME} is running."    # returncode 0 = put sensor in OK status
 	else
 		echo "1:404:WARNING - VM ${ARGUMENTO} is not present or not running."    # returncode 1 = put sensor in WARNING status
+		exit 1
 	fi
 }
 
