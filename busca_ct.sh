@@ -3,19 +3,20 @@ COMMAND=$0
 ARGUMENTO=$1
 FLAG=$2
 
-QM=`which qm`
+PCT=`which pct`
 ID=`which id`
 
 function check_service_(){
-	VMIsRunning=false
-	BUSCA=`${QM} list | grep ${ARGUMENTO} | grep running`
+	CTIsRunning=false
+	BUSCA=`${PCT} list | grep ${ARGUMENTO} | grep running`
 	ULTIMA=$?
 	if [ ${ULTIMA} -eq 0 ] ; then
-		VMIsRunning=true
-		VM_NAME=`${QM} list | grep ${ARGUMENTO} | awk -F' ' {'print $2'}`
-		echo "0:200:OK - VM ${ARGUMENTO} - ${VM_NAME} is running."    # returncode 0 = put sensor in OK status
+		CTIsRunning=true
+		CT_NAME=`${PCT} list | grep ${ARGUMENTO} | awk -F' ' {'print $3'}`
+		echo "0:200:OK - CT ${ARGUMENTO} - ${CT_NAME} is running."    # returncode 0 = put sensor in OK status
 	else
-		echo "1:404:WARNING - VM ${ARGUMENTO} is not present or not running."    # returncode 1 = put sensor in WARNING status
+		echo "1:404:WARNING - CT ${ARGUMENTO} is not present or not running."    # returncode 1 = put sensor in WARNING status
+		exit 1
 	fi
 }
 
@@ -32,8 +33,8 @@ is_root_(){
 }
 
 function preparation_(){
-	if [ ! -x ${QM} ] ; then 
-		echo "2:500:ERROR - command qm not found."
+	if [ ! -x ${PCT} ] ; then 
+		echo "2:500:ERROR - command pct not found."
 		die_ ; 
 	fi
 	if [ ! -x ${ID} ] ; then
@@ -44,7 +45,7 @@ function preparation_(){
 }
 
 function ajuda_(){
-        echo "2:500:ERROR - Usage: ${COMMAND} [ProxMox VM Identification Number] [-h|--help]" >&2 ;
+        echo "2:500:ERROR - Usage: ${COMMAND} [ProxMox CT Identification Number] [-h|--help]" >&2 ;
 	die_ ;
 }
 
