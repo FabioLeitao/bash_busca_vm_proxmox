@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/bash
 COMMAND=$0
 ARGUMENTO=$1
 FLAG=$2
@@ -15,8 +15,9 @@ function check_service_(){
 		VM_NAME=`${QM} list | grep ${ARGUMENTO} | awk -F' ' {'print $2'}`
 		echo "0:200:OK - VM ${ARGUMENTO} - ${VM_NAME} is running."    # returncode 0 = put sensor in OK status
 	else
-		echo "1:404:WARNING - VM ${ARGUMENTO} is not present or not running."    # returncode 1 = put sensor in WARNING status
-		exit 1
+		#echo "1:404:WARNING - VM ${ARGUMENTO} is not present or not running."    # returncode 1 = Warning - put sensor in WARNING status
+		echo "5:404:WARNING - VM ${ARGUMENTO} is not present or not running."    # returncode 5 = Content Error - put sensor in WARNING status
+		exit 5
 	fi
 }
 
@@ -27,25 +28,25 @@ die_(){
 is_root_(){
 	local id=$(${ID} -u)
 	if [ $id -ne 0 ] ; then
-		echo "4:500:ERROR - You have to be root to run $0."    # returncode 4 = put sensor in DOWN status
+		echo "4:500:ERROR - You have to be root to run $0."    # returncode 4 = Protocol Error - put sensor in DOWN status
 		die_ ;
 	fi
 }
 
 function preparation_(){
 	if [ ! -x ${QM} ] ; then 
-		echo "2:500:ERROR - command qm not found."
+		echo "3:500:ERROR - command qm not found."     # returncode = 3 = System Error - put sensor in DOWN status
 		die_ ; 
 	fi
 	if [ ! -x ${ID} ] ; then
-		echo "2:500:ERROR - command id not found."    # returncode = 2 = put sensor in DOWN status
+		echo "3:500:ERROR - command id not found."    # returncode = 3 = System Error - put sensor in DOWN status
 		die_ ; 
 	fi
 	is_root_;
 }
 
 function ajuda_(){
-        echo "2:500:ERROR - Usage: ${COMMAND} [ProxMox VM Identification Number] [-h|--help]" >&2 ;
+        echo "2:500:ERROR - Usage: ${COMMAND} [ProxMox VM Identification Number] [-h|--help]" >&2 ; # returncode = 2 = put sensor in DOWN status
 	die_ ;
 }
 
